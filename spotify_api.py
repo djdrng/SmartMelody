@@ -1,185 +1,150 @@
+import itertools
 import requests
-import spotipy
-from spotipy.oauth2 import SpotifyOAuth
+import json
+# from spotipy import Spotify
+# from spotipy.oauth2 import SpotifyOAuth
 
-# These are for Devinn's Test Project for now, we will need to update later
-CLIENT_ID = 'e6bb4aa58081446ab6938f38bcce50f3'
-CLIENT_SECRET = 'a2fc514be5be4be7ab9e33a433e1dc2a'
-REDIRECT_URI = 'http://localhost:8080'
 
 class SpotifySongMetadata:
-  def __init__(self):
-    self._genres = []
-    self._limit = 0
-    self._acousticness = (0, 0, 0)
-    self._danceability = (0, 0, 0)
-    self._energy = (0, 0, 0)
-    self._instrumentalness = (0, 0, 0)
-    self._liveness = (0, 0, 0)
-    self._loudness = (0, 0, 0)
-    self._mode = (0, 0, 0)
-    self._speechiness = (0, 0, 0)
-    self._valence = (0, 0, 0)
+    def __init__(self):
+        # dictionary for holding metadata parameters
+        self.metadata = {}
 
-  # Define Property Getters
-  @property
-  def genres(self) -> list[str]:
-    return self._genres
-  
-  @property
-  def limit(self) -> int:
-    return self._limit
+        # seed parameters
+        # these are required parameters for recommendations
+        self.seed_attrs = [
+            'seed_artists',
+            'seed_genres',
+            'seed_tracks',
+        ]
 
-  @property
-  def acousticness(self) -> tuple[float]:
-    return self._acousticness
+        valid_fraction = lambda x: x >= 0.0 and x <= 1.0
+        # prefixes for numerical parameters
+        prefixes = [
+            'target',
+            'min',
+            'max',
+        ]
+        # numerical parameter validators
+        # dictionary, where key is name of the prefix-less attribute
+        # and value is a function that validates the value of the attribute
+        numerical_attr_validators = {
+            'acousticness': valid_fraction,
+            'danceability': valid_fraction,
+            'energy': valid_fraction,
+            'instrumentalness': valid_fraction,
+            'liveness': valid_fraction,
+            'loudness': lambda x: x <= 0,
+            'mode': lambda x: x in (0, 1),
+            'speechiness': valid_fraction,
+            'valence': valid_fraction,
+        }
 
-  @property
-  def danceability(self) -> tuple[float]:
-    return self._danceability
+        # add prefixes to all numerical attributes
+        self.numerical_attrs = {
+            f'{i[0]}_{i[1]}': numerical_attr_validators[i[1]]
+            for i in itertools.product(prefixes, numerical_attr_validators)
+        }
 
-  @property
-  def energy(self) -> tuple[float]:
-    return self._energy
+    # set attribute value
+    def set(self, attr: str, value: any):
+        if attr in self.seed_attrs:
+            # seed attributes should be comma separated strings
+            # this converts list of strings to comma separated string
+            value = ','.join(value)
+        elif attr in self.numerical_attrs:
+            if not self.numerical_attrs[attr](value):
+                raise ValueError(
+                    f'Invalid value {value} for attribute "{attr}"'
+                )
+        else:
+            raise ValueError(f'Invalid attribute "{attr}"')
 
-  @property
-  def instrumentalness(self) -> tuple[float]:
-    return self._instrumentalness
+        self.metadata[attr] = value
 
-  @property
-  def liveness(self) -> tuple[float]:
-    return self._liveness
+    # get value of attribute
+    # returns None if attribute hasn't been set
+    def get(self, attr: str):
+        if attr not in self.seed_attrs and attr not in self.numerical_attrs:
+            raise ValueError(f'Invalid attribute "{attr}"')
 
-  @property
-  def loudness(self) -> tuple[float]:
-    return self._loudness
+        return self.metadata.get(attr)
 
-  @property
-  def mode(self) -> tuple[float]:
-    return self._mode
+    # get metadata dictionary
+    def dict(self) -> dict:
+        return self.metadata
 
-  @property
-  def speechiness(self) -> tuple[float]:
-    return self._speechiness
+    # get metadata iterator for dictionary conversion
+    def __iter__(self) -> any:
+        for attr in self.metadata:
+            yield (attr, self.metadata[attr])
 
-  @property
-  def valence(self) -> tuple[float]:
-    return self._valence
-  
-  # Define Property Setters
-  @genres.setter
-  def genres(self, new_genres: list[str]) -> None:
-    self._genres = new_genres
+    # convert and return metadata dictionary to string
+    def __str__(self) -> str:
+        return str(self.metadata)
 
-  @limit.setter
-  def limit(self, new_limit: int) -> None:
-    self._limit = new_limit
-
-  @acousticness.setter
-  def acousticness(self, new_acousticness: tuple[float]) -> None:
-    self._acousticness = new_acousticness
-
-  @danceability.setter
-  def danceability(self, new_danceability: tuple[float]) -> None:
-    self._danceability = new_danceability
-
-  @energy.setter
-  def energy(self, new_energy: tuple[float]) -> None:
-    self._energy = new_energy
-
-  @instrumentalness.setter
-  def instrumentalness(self, new_instrumentalness: tuple[float]) -> None:
-    self._instrumentalness = new_instrumentalness
-
-  @liveness.setter
-  def liveness(self, new_liveness: tuple[float]) -> None:
-    self._liveness = new_liveness
-
-  @loudness.setter
-  def loudness(self, new_loudness: tuple[float]) -> None:
-    self._loudness = new_loudness
-
-  @mode.setter
-  def mode(self, new_mode: tuple[float]) -> None:
-    self._mode = new_mode
-
-  @speechiness.setter
-  def speechiness(self, new_speechiness: tuple[float]) -> None:
-    self._speechiness = new_speechiness
-
-  @valence.setter
-  def valence(self, new_valence: tuple[float]) -> None:
-    self._valence = new_valence
+    # convert and return metadata dictionary to pretty formatted string
+    def __repr__(self) -> str:
+        return json.dumps(self.metadata, sort_keys=True, indent=4)
 
 class SpotifyAPIHandler:
-  def __init__(self, client_id: str, client_secret: str, redirect_uri: str) -> None:
-    self._client_id = client_id
-    self._client_secret = client_secret
-    self._redirect_uri = redirect_uri
+    def __init__(self, client_id: str, client_secret: str, redirect_uri: str) -> None:
+        # credentials
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.redirect_uri = redirect_uri
 
+        # HTTP headers
+        self.headers = {}
 
-    # URLS
-    self._auth_url = 'https://accounts.spotify.com/authorize'
-    self._token_url = 'https://accounts.spotify.com/api/token'
-    self._base_url = 'https://api.spotify.com/v1/'
+        # Spotify API urls
+        self.AUTH_URL = 'https://accounts.spotify.com/authorize'
+        self.TOKEN_URL = 'https://accounts.spotify.com/api/token'
+        self.BASE_URL = 'https://api.spotify.com/v1/'
+        self.RECOMMENDATIONS_URL = self.BASE_URL + 'recommendations/'
   
-  # HTTP Operations
-  def post_request(self, url: str, args: any) -> any:
-    return requests.post(url, args)
+    # HTTP Operations
+    def http_post(self, url: str, *args: tuple[any, ...], **kwargs: dict[any, any]) -> any:
+        return requests.post(url, headers=self.headers, *args, **kwargs)
 
-  def get_request(self, url: str, request: str, headers: dict[any, any]) -> any:
-    return requests.get(url + request, headers=headers)
+    def http_get(self, url: str, *args: tuple[any, ...], **kwargs: dict[any, any]) -> any:
+        return requests.get(url, headers=self.headers, *args, **kwargs)
 
-  def add_access_token_to_header(self) -> None:
-    auth_response = self.post_request(self._token_url, {
-      'grant_type': 'client_credentials',
-      'client_id': self._client_id,
-      'client_secret': self._client_secret,
-    })
+    # authentical client using client credentials flow
+    def authenticate_client(self) -> None:
+        auth_response = requests.post(
+            self.TOKEN_URL,
+            data = {
+                'grant_type': 'client_credentials',
+                'client_id': self.client_id,
+                'client_secret': self.client_secret,
+            },
+        )
 
-    # save the access token
-    auth_response_data = auth_response.json()
-    access_token = auth_response_data['access_token']
-    self._headers = {
-      'Authorization': f'Bearer {access_token}'
-    }
+        # save the access token
+        auth_response_data = auth_response.json()
+        access_token = auth_response_data['access_token']
 
-  def get_tracks_from_metadata(self, metadata: SpotifySongMetadata):
-    r = self.get_request(self._base_url, 'recommendations', headers=self._headers.update(metadata))
-    tracks = r.json()['tracks']
-    return tracks
+        # authorization header
+        self.headers['Authorization'] = f'Bearer {access_token}'
 
-  def get_song_recommendation_for_user(self, metadata: SpotifySongMetadata):
-    
-  
-  def prompt_user_authentication(self):
-    oauth = SpotifyOAuth(client_id=self._client_id,
-                         client_secret=self._client_secret,
-                         redirect_uri=self._redirect_uri,
-                         scope="user-library-read,user-modify-playback-state")
-    self._spotipy = spotipy.Spotify(auth_manager=oauth)
+    # commenting this out for now since we're not using oauth yet
+    # def oauth_user(self):
+    #     oauth = SpotifyOAuth(
+    #         client_id=self.client_id,
+    #         client_secret=self.client_secret,
+    #         redirect_uri=self.redirect_uri,
+    #         scope="user-library-read,user-modify-playback-state"
+    #     )
 
-  def start_user_playback(self, track_uri: str):
-    self._spotipy.start_playback(uris=track_uri)
-    
-# acousticness, danceability, energy, instrumentalness, liveness, loudness, mode, speechiness, valence
+    #     self.spotipy = Spotify(auth_manager=oauth)
 
-if (__name__ == '__main__'):
-  handler = SpotifyAPIHandler(client_id=CLIENT_ID, client_secret=CLIENT_SECRET, redirect_uri=REDIRECT_URI)
-  handler.add_access_token_to_header()
+    # def start_user_playback(self, track_uri: str):
+    #     self.spotipy.start_playback(uris=track_uri)
 
-  metadata = SpotifySongMetadata()
-  metadata.limit = 1
-  metadata.acousticness = (0.0, 0.1, 0.2)
-  metadata.danceability = (0.0, 0.1, 0.2)
-  metadata.energy = (0.0, 0.1, 0.2)
-  metadata.instrumentalness = (0.0, 0.1, 0.2)
-  metadata.liveness = (0.0, 0.1, 0.2)
-  metadata.loudness = (0.0, 0.1, 0.2)
-  metadata.mode = (0.0, 0.1, 0.2)
-  metadata.speechiness = (0.0, 0.1, 0.2)
-  metadata.valence = (0.0, 0.1, 0.2)
+    def get_recommendations(self, metadata: dict[str, any], limit=1):
+        params = dict(dict(metadata), limit=limit)
+        response = self.http_get(self.RECOMMENDATIONS_URL, params=params)
+        track_ids = [track['id'] for track in response.json().get('tracks', [])]
 
-  handler.get_song_from_metadata_ranges(metadata)
-
-  
+        return track_ids
