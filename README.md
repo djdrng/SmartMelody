@@ -1,4 +1,4 @@
-# :musical_notes: SmartMelody
+# :musical_note: SmartMelody
 
 **University of Waterloo**
 
