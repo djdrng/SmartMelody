@@ -363,5 +363,3 @@ class SpotifyAPIHandler:
         
         print(response.json())
 
-
-
