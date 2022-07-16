@@ -140,6 +140,7 @@ class SpotifyAPIHandler:
         self.BASE_URL = 'https://api.spotify.com/v1/'
         self.TRACK_URL = self.BASE_URL + 'tracks/'
         self.AUDIO_FEATURES_URL = self.BASE_URL + 'audio-features/'
+        self.AUDIO_ANALYSIS_URL = self.BASE_URL + 'audio-analysis/'
         self.RECOMMENDATIONS_URL = self.BASE_URL + 'recommendations/'
 
         self.authenticate_client()
@@ -383,3 +384,27 @@ class SpotifyAPIHandler:
                     features_data[k] = [v]
 
         return features_data
+
+    def get_audio_analysis(self, track_id: str) -> dict:
+        """
+        Get audio analysis of a song by track ID.
+
+        Examples
+        --------
+        >>> handler = SpotifyAPIHandler(...)
+        >>> handler.get_audio_analysis('3G4yDdFmz6G8roJ4Rohpue')
+        {
+            "acousticness": 0.0462,
+            "danceability": 0.328,
+            "energy": 0.42,
+            "valence": 0.0365,
+            ...
+        }
+        """
+
+        if 'Authorization' not in self.headers:
+            raise ValueError('Not authenticated, run self.authenticate_client() first')
+
+        response = self.http_get(self.AUDIO_ANALYSIS_URL + track_id)
+
+        return response.json()
