@@ -8,9 +8,13 @@ export default function Tags() {
     sad: false
   });
 
-  const handleCheckbox = (e) => {
+  const handleRadiobutton = (e) => {
     let tag = e.target.value;
-    let newTags = tags;
+    let newTags = {
+      happy: false,
+      horror: false,
+      sad: false
+    };
     if(tag === "happy"){
       newTags.happy = !tags.happy;
     }
@@ -33,22 +37,22 @@ export default function Tags() {
       <h2>Select your tags</h2>
       happy 
       <input 
-        type="checkbox" 
+        type="radio" 
         name="tag" 
         value="happy"
-        onChange={handleCheckbox} />
+        onChange={handleRadiobutton} />
       horror 
       <input 
-        type="checkbox" 
+        type="radio" 
         name="tag" 
         value="horror"
-        onChange={handleCheckbox} />
+        onChange={handleRadiobutton} />
       sad 
       <input 
-        type="checkbox" 
+        type="radio" 
         name="tag" 
         value="sad"
-        onChange={handleCheckbox} />
+        onChange={handleRadiobutton} />
       <Button onClick={handleSubmit}>Submit</Button>
     </main>
   );
