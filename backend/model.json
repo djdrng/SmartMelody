@@ -1,5 +1,5 @@
 {
-    "happy": {
+    "happy_instrumental": {
         "max_acousticness": 0.4727109413285636,
         "max_speechiness": 0.09848461298097062,
         "min_danceability": 0.6631031309083332,
@@ -8,16 +8,34 @@
         "min_valence": 0.47506271484973367,
         "seed_tracks": "2o3VdzVj1qRGJpLI5y2qMj,5GzllvwuJMnljMJRHME784,1z5ATfmGQlUTbrXnsK5p6F,5MRczwMY5mSmCR8VjtIRIn,6RAGS2Ca2rNJNXw4Imq824,6P7B3k7BcQYugVo2xUoTkL,68kMQwcDaHPMYtFewW9c8f,7ces7Na2HsD8IR8dMF8MSx,2Su6XQdJCzaNnNxXLagxxC,41HL2spteYRrKYg9piP3Es,0iAOXvEDIMaAWPP5Ur0fYF,5oBb0scU4CKOhv9vPguqxI,3NIMU0kcDa8NH21FgmlfHT,25E2kmLBZ8WmP3BertEpKZ,7hnnVlCF3D9RRva2q8uRto,5pYkGiYMl8lCf2b8KmSWSb,7fuN0INDJclqjsUzsPTkyg,3M1EzcykzZJyUjsYO1ggpf,7acuewfEOI92KIhAO3X7xf,2CYM9CzEMkmnm7uVbLkcCZ,1iZWhSI9nhv4gGJb7m69zP,0Ivn2pAIbm0pYDA5uFzlsp,1yIBqMfWuyekJBmTDlkx5X,5lTG8zPhJTxGDZgSBKdKkU,5hlLEOe9WMe5jj5hN1YiMV,1J9aYyy3YVSTFst8F0MnQO,57mYDr5l9wKhQUsFCs7Mf6,4654z066wpI6sY0VLopbJ9,1vP8aFWexUYYdOKf16JAlT,44GJErn5z7tSxcmrKnAWVD,6z4EaOvA3kq7FzJVodm1S7,3DaGnKmAAmyZGIbC0KjmxT,6nFgrL1alG0pFH9J6eqqiT,2xJhckp9V9rnRpv3of7Kp3,7FbWAdQ6bCTELe2m1scpk5,2AonXR7jppJ8Rh7IaGqeLD,5qBv1alEB6DQuHxhdBjhfW,43JR1hsy1ElHXXw0cHXN9v,7djKzwJwGQ7ojMigVwEt2r,7x7RaYlvCFyhW5EC4Pfpm1,2YunIoU8JzOmWMWQRetSFG,1KYkEfs2uz4X379Zc9aWbD,2om25jSluDJVwEKRhfwtJm"
     },
-    "horror": {
-        "max_acousticness": 0.2891801380268746,
-        "max_danceability": 0.3926534144590716,
-        "max_energy": 0.5041209468861717,
-        "max_speechiness": 0.105815110931454,
-        "max_valence": 0.08974974826866108,
-        "min_instrumentalness": 0.628943621500792,
-        "seed_tracks": "4JC8tCwjzDSjgLsKFtJOPk,7mcKLkGSybFIhaL1Q1HXrY,212yUukcGAF9I7gAKOsxaz,1ZZyebwuub1TD7UQtOAYQf,6EhNN0gGNmVcYDXCO1Sie3,5KvUFvgQSjBTh1L2AskpCu,6JWO01LUmwR7AkT1E2uls2,5NUNSq36erWcIsJ3CAqQ2O,7ztBYHgAfmDBTHa4W3ZS7R,02ZqpxyvX61EtHMowAsHir,4lrPoXMATfmwNtE4NHJZv0,3zZZxLzHLSlUjFBXe37oLY,1WpnVdPkmOSK35krOON4zO,3DEbPCIz67TgVvG9Hs9Hoi,3ROZRh4p2rw62CYk57jcZP,2hll88SgY3yVA07lP0fNAV,74d7I0BsnHbW5H7KNzcTgH,0spJG5V9VosDftPzVypMFh,7kj6eT6R5Er4e8BC3N4wKu,16tfZWipfQCWTuwj2akvWQ,7AOUWbpGLMJrLVAebbVCJ8"
+    "happy_vocal": {
+        "max_acousticness": 0.20199513100933883,
+        "max_instrumentalness": 0.01046790192453006,
+        "max_speechiness": 0.052905430591871104,
+        "min_danceability": 0.6475186722873255,
+        "min_energy": 0.6580251016655008,
+        "min_valence": 0.5840317257325595,
+        "seed_tracks": "32OlwWuMpZ6b0aN2RZOeMS,1ExfPZEiahqhLyajhybFeS,2iuZJX9X9P0GKaE93xcPjk,4XNrMwGx1SqP01sqkGTDmo,7hL9dwyJRu5e8wKEwpBjQA,2ib1h7hKDcYkZCrjWLR8H9,4r6eNCsrZnQWJzzvFh4nlg,0FDzzruyVECATHXKHFs9eJ,1Cv1YLb4q0RzL6pybtaMLo,3tjFYV6RSFtuktYl3ZtYcq,5CgGHM0qilHnFfFPqHiG12,6HxIrBqSCOczongLdPqXKq,2iUmqdfGZcHIhS3b9E9EWq,2tznHmp70DxMyr2XhWLOW0,4HlFJV71xXKIGcU3kRyttv,4OzSUjDgKJVKDSfjwHB2cU,5LxvwujISqiB8vpRYv887S,5bcTCxgc7xVfSaMV3RuVke,40FLJc17FMZaPmCQEEZgB0,1rqqCSm0Qe4I9rUvWncaom,4MFCXniy7I8tj0GXtf3wgC,0HqeTDZMGlYDmgGGVFQrSg,3TGRqZ0a2l1LRblBkJoaDx,1cQXDEZKlEdUbXvQwl6qqT"
     },
-    "sad": {
+    "horror_instrumental": {
+        "max_danceability": 0.24788361383859794,
+        "max_energy": 0.3453857828002211,
+        "max_speechiness": 0.054050585285079084,
+        "max_valence": 0.13279094063028218,
+        "min_acousticness": 0.6641508630011149,
+        "min_instrumentalness": 0.8615968571019993,
+        "seed_tracks": "6YlylkS23CGiX4SQTqo3Vv,5mKbcpl9jtxQyseKUWx7Mm,4FbR4Xx4cg1LBHIt57ATRz,6pBGVriBfI3NOUxbj7EgBC,2o9QrT3Di3GctQEdDE5X7i,0CfGUMUay7rNWS8hEQPaq0,5YR9PeqflUXbVgOeacUAad,3g9szLHbnf8fqOW842NCWj,1RzWKvIiznmHE6LcefnbSD,0RBu8weGJkOAL0qo0zN4En,3GyIzQ3Y2odFVWzDruDkA9,4QjanDCTDAVtD39krGgtTC,2Z3lEp8YGLeEk4TlrEEFnP,2RTZTXi4ani31Pz2zmP73K,3o5QQeCom27eUGWya1pQZ6,3aSSQJhhAYHi5SgKmAdOZU,0p4LXzDJN530wLjAjWZ68M,1uhYn52YT0GtZO2FoRl9QK,6RDrXlug5Yl5hfaNLIEdjR"
+    },
+    "horror_vocal": {
+        "max_danceability": 0.548168279517745,
+        "max_energy": 0.4739068918929028,
+        "max_instrumentalness": 0.3329855776335719,
+        "max_speechiness": 0.06242783409128935,
+        "max_valence": 0.36830720854778287,
+        "min_acousticness": 0.2480701850102795,
+        "seed_tracks": "7e4G3lltabdGTRQonrKYaY,4XqmIO6Rhx158OgvDIq4Xq,6EtUzfEp4tBk4r4ymq0vEF,7jHhi7TwGrLIAheHBXnOFy,5y87ZIVaTRf35g64LMHpoH,3uGvXX9ol5aySJVrSKD1xx"
+    },
+    "sad_instrumental": {
         "max_energy": 0.2800018039186347,
         "max_speechiness": 0.05586756288684669,
         "max_valence": 0.1472009600624001,
@@ -25,5 +43,14 @@
         "min_danceability": 0.37793414458053554,
         "min_instrumentalness": 0.7008112832964268,
         "seed_tracks": "77yA6alNN6ToGYpWT4OvTw,0Xms02B4yBtKxUodh8xoTg,0bzVwPR2AlOnPP6cgQzOsD,6bUPGoHDqWfVDIwBkAWU0u,1qBfV3C5YsL0EbGwSBEpjf,4WR8G8LZgKiL5VegYuAl08,5NjVquS0g8mAcnu7tlS06l,6KawUlREFCmDeVIQotXs3K,4Vh99zVeuhki5APqlztlh5,3mPWkhb9UvJudEa9LwVXaU,38E7bSvL70VLUyvt7cBtez,5D2aiOhu0Lmt6SMpkFLTtQ,5QZNE3U7Th0iuMpxLuE6Zr,6KRDiKh3eTU1AOtYPStAOt,4qsK9SGP6Y0wbzGGDvBzZ7,0JXVsoVCcb0MZTekRSGHvA,4RN9FjMd4lx0CxYo7WJVZe"
+    },
+    "sad_vocal": {
+        "max_danceability": 0.5113309386627855,
+        "max_energy": 0.4444529954839693,
+        "max_instrumentalness": 0.15777966698705165,
+        "max_speechiness": 0.053628367967431,
+        "max_valence": 0.278038891444618,
+        "min_acousticness": 0.497565774920929,
+        "seed_tracks": "55Am8neGJkdj2ADaM3aw5H,7BaIkYIBVAFHJhfmGGOBo0,1ei3hzQmrgealgRKFxIcWn,5kcvBnt6DPX3AMEsCx1qDh,2KnLkZ3z7PO3kgVGHGqDpD,6xGruZOHLs39ZbVccQTuPZ,6JNYggoxZFBls3eHSy5wMe,4GZiCx1acAHMflQ2f8WZKH,0l2HaL3nbp9AFJ428p4yaA,7wxrjOQlPYZYF1KY7yKVy7,3s8GJ1A9ujxsKcLaJ2wY7Q,0HZhYMZOcUzZKSFwPOti6m,3az62jBzapcmY6WHtgv955,7hDVYcQq6MxkdJGweuCtl9"
     }
 }
