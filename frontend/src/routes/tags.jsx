@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Button from 'react-bootstrap/Button';
+import { Button, Container, Col, Form, Row } from 'react-bootstrap';
 
 export default function Tags() {
   const [spotifyLink, setSpotifyLink] = useState('');
@@ -40,6 +40,7 @@ export default function Tags() {
   // TODO: Put the name of the song
   const SongLink = () => (
     <p>
+      <br/>
       <a 
         href={spotifyLink} 
         target="_blank" 
@@ -48,7 +49,56 @@ export default function Tags() {
       </a>
     </p>
   )
+
   
+  return (
+    <Container>
+      <Form>
+        <Row>
+          <h3>Select your tags</h3>
+          <Col>
+            <h3>Mood</h3>
+            {['happy', 'sad', 'horror'].map((tag) => (
+              <div key={tag} className="mb-3">
+                <Form.Check 
+                  name='tag'
+                  type='radio'
+                  id={tag}
+                  label={tag}
+                  value={tag}
+                  onChange={handleRadiobutton}
+                />
+              </div>
+            ))}
+          </Col>
+          <Col>
+            <h3>Options</h3>
+            {['vocals'].map((tag) => (
+              <div key={tag} className="mb-3">
+                <Form.Check 
+                  name='options'
+                  type='checkbox'
+                  id={tag}
+                  label={tag}
+                  value={tag}
+                  onChange={handleCheckbox}
+                />
+              </div>
+            ))}
+          </Col>
+        </Row>
+        <Button 
+          onClick={handleSubmit}
+          disabled={!tagSelected}
+        >
+          Submit
+        </Button>
+        {submitted && <SongLink />}
+      </Form>
+    </Container>
+  );
+  
+  /*
   return (
     <main style={{ padding: "1rem 0" }}>
       <h2>Select your tags</h2>
@@ -58,13 +108,13 @@ export default function Tags() {
         name="tag" 
         value="happy"
         onChange={handleRadiobutton} />
-      horror 
+      {" "} horror 
       <input 
         type="radio" 
         name="tag" 
         value="horror"
         onChange={handleRadiobutton} />
-      sad 
+      {" "} sad 
       <input 
         type="radio" 
         name="tag" 
@@ -82,4 +132,5 @@ export default function Tags() {
       {submitted && <SongLink />}
     </main>
   );
+  */
 }
