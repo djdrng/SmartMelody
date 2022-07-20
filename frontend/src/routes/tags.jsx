@@ -2,45 +2,44 @@ import { useState } from "react";
 import Button from 'react-bootstrap/Button';
 
 export default function Tags() {
-  const [trackID, setTrackID] = useState('');
-  const [tags, setTags] = useState({
-    happy: false,
-    horror: false,
-    sad: false
-  });
+  const [spotifyLink, setSpotifyLink] = useState('');
+  const [tag, setTag] = useState('');
+
+  // These boolean states might not be necessary
+  const [tagSelected, setTagSelected] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  
 
   const handleRadiobutton = (e) => {
-    let tag = e.target.value;
-    let newTags = {
-      happy: false,
-      horror: false,
-      sad: false
-    };
-    if(tag === "happy"){
-      newTags.happy = !tags.happy;
-    }
-    if(tag === "horror"){
-      newTags.horror = !tags.horror;
-    }
-    if(tag === "sad"){
-      newTags.sad = !tags.sad;
-    }
-    setTags(newTags);
-    //console.log(tags);
+    setTag(e.target.value);
+    setTagSelected(true);
   }
 
   const handleSubmit = (e) => {
+    setSubmitted(true);
+    let request = 'http://localhost:8000/get-recommendations?mood=' + tag + '&vocals=false&limit=1';
+    fetch(request)
+      .then(res => res.json())
+      .then(data => setSpotifyLink('https://open.spotify.com/track/' + data));
     /*
-    fetch('https://jsonplaceholder.typicode.com/users')
+    // TODO: Get the name of the song
+    console.log(spotifyLink);
+    fetch(spotifyLink)
       .then(res => res.json())
-      .then(json => console.log(json));
+      .then(data => console.log(data));
     */
-    fetch('http://localhost:8000/get-recommendations?mood=happy&vocals=true&limit=1')
-      .then(res => res.json())
-      .then(json => setTrackID(json));
-    //console.log(fetch('http://localhost:8000/get-recommendations?mood=happy&vocals=true&limit=1'));
-    //console.log(tags);
   }
+
+  const SongLink = () => (
+    <p>
+      <a 
+        href={spotifyLink} 
+        target="_blank" 
+        rel="noreferrer">
+        Spotify link to song
+      </a>
+    </p>
+  )
   
   return (
     <main style={{ padding: "1rem 0" }}>
@@ -63,8 +62,8 @@ export default function Tags() {
         name="tag" 
         value="sad"
         onChange={handleRadiobutton} />
-      <Button onClick={handleSubmit}>Submit</Button>
-      <p>{ trackID }</p>
+      {tagSelected && <Button onClick={handleSubmit}>Submit</Button>}
+      {submitted && <SongLink />}
     </main>
   );
 }
