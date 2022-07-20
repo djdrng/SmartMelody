@@ -32,6 +32,17 @@ To get a recommendation, send a GET request to the `/get-recommendations` endpoi
 curl http://localhost:8000/get-recommendations?mood=happy
 ```
 
+## Training the Model
+
+`training.json` holds track IDs under specific tags, indended for training.
+
+Run `train.py` to read the training data in `training.json` and produce `model.json`, which contains generated metadata bounds to be used for recommending tracks.
+
+```bash
+cd backend/
+python3 train.py
+```
+
 ## API Documentation
 
 ![API Docs](img/api_docs_screenshot.png)

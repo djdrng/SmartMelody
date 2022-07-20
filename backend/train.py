@@ -5,7 +5,7 @@ from spotify_api import SpotifyAPIHandler, SpotifySongMetadata
 from credentials import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
 from config import TAGS_OF_INTEREST, TRAINING_FILENAME, MODEL_FILENAME
 
-def t_confidence_intervals(data, alpha=0.95):
+def t_confidence_intervals(data: list[float], alpha: float = 0.95) -> tuple[float, float]:
     """
     Given data in an iterable, this returns the Student's t confidence intervals.
     Set alpha to adjust the targeted coverage probability.
@@ -18,7 +18,7 @@ def t_confidence_intervals(data, alpha=0.95):
         scale=sem(data)
     )
 
-def generate_metadata(features_data):
+def generate_metadata(features_data: dict[str, list[float]]) -> dict[str, float]:
     """
     Generates metadata by computing confidence intervals for every tag.
 
@@ -60,7 +60,7 @@ def generate_metadata(features_data):
 
     return metadata
 
-def train():
+def train() -> None:
     """
     Read track IDs from training.json,
     generate metadata using confidence intervals,
