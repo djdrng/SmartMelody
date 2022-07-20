@@ -45,4 +45,4 @@ python3 train.py
 
 ## API Documentation
 
-![API Docs](img/api_docs_screenshot.png)
+![API Docs](../img/api_docs_screenshot.png)
