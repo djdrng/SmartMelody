@@ -2,6 +2,7 @@ import { useState } from "react";
 import Button from 'react-bootstrap/Button';
 
 export default function Tags() {
+  const [trackID, setTrackID] = useState('');
   const [tags, setTags] = useState({
     happy: false,
     horror: false,
@@ -29,7 +30,16 @@ export default function Tags() {
   }
 
   const handleSubmit = (e) => {
-    console.log(tags);
+    /*
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then(res => res.json())
+      .then(json => console.log(json));
+    */
+    fetch('http://localhost:8000/get-recommendations?mood=happy&vocals=true&limit=1')
+      .then(res => res.json())
+      .then(json => setTrackID(json));
+    //console.log(fetch('http://localhost:8000/get-recommendations?mood=happy&vocals=true&limit=1'));
+    //console.log(tags);
   }
   
   return (
@@ -54,6 +64,7 @@ export default function Tags() {
         value="sad"
         onChange={handleRadiobutton} />
       <Button onClick={handleSubmit}>Submit</Button>
+      <p>{ trackID }</p>
     </main>
   );
 }
