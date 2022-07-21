@@ -138,6 +138,7 @@ class SpotifyAPIHandler:
         self.AUTH_URL = 'https://accounts.spotify.com/authorize/'
         self.TOKEN_URL = 'https://accounts.spotify.com/api/token/'
         self.BASE_URL = 'https://api.spotify.com/v1/'
+        self.TRACK_URL = self.BASE_URL + 'tracks/'
         self.AUDIO_FEATURES_URL = self.BASE_URL + 'audio-features/'
         self.RECOMMENDATIONS_URL = self.BASE_URL + 'recommendations/'
 
@@ -194,6 +195,98 @@ class SpotifyAPIHandler:
     # def start_user_playback(self, track_uri: str):
     #     self.spotipy.start_playback(uris=track_uri)
 
+    def get_track(self, track_id: str) -> dict:
+        """
+        Get track information from track ID.
+
+        Examples
+        --------
+        >>> handler = SpotifyAPIHandler(...)
+        >>> track_info = handler.get_track('7e4G3lltabdGTRQonrKYaY')
+        >>> track_info
+        {
+            "album": {
+                "album_type": "single",
+                "artists": [...],
+                "available_markets": [...],
+                "external_urls": {
+                    "spotify": "https://open.spotify.com/album/4KElxuVixn25l3SOguxB8Z"
+                },
+                "href": "https://api.spotify.com/v1/albums/4KElxuVixn25l3SOguxB8Z",
+                "id": "4KElxuVixn25l3SOguxB8Z",
+                "images": [...],
+                "name": "Lullaby of Woe (From \"The Witcher 3\")",
+                "release_date": "2018-02-15",
+                "release_date_precision": "day",
+                "total_tracks": 1,
+                "type": "album",
+                "uri": "spotify:album:4KElxuVixn25l3SOguxB8Z"
+            },
+            "artists": [...],
+            "available_markets": [],
+            "disc_number": 1,
+            "duration_ms": 150019,
+            "explicit": false,
+            "external_ids": {
+                "isrc": "QZ22B1901514"
+            },
+            "external_urls": {
+                "spotify": "https://open.spotify.com/track/7e4G3lltabdGTRQonrKYaY"
+            },
+            "href": "https://api.spotify.com/v1/tracks/7e4G3lltabdGTRQonrKYaY",
+            "id": "7e4G3lltabdGTRQonrKYaY",
+            "is_local": false,
+            "name": "Lullaby of Woe (From \"The Witcher 3\")",
+            "popularity": 0,
+            "preview_url": null,
+            "track_number": 1,
+            "type": "track",
+            "uri": "spotify:track:7e4G3lltabdGTRQonrKYaY"
+        }
+        """
+
+        if 'Authorization' not in self.headers:
+            raise ValueError('Not authenticated, run self.authenticate_client() first')
+
+        response = self.http_get(self.TRACK_URL + track_id)
+
+        return response.json()
+
+    def get_multiple_tracks(self, track_ids: list[str]) -> list[dict]:
+        """
+        Get track information from multiple track IDs.
+        This is equivalent to looping for track IDs
+        and calling self.get_track().
+        This is a separate method because Spotify has a separate endpoint
+        used for obtaining information for multiple songs at once.
+
+        Examples
+        --------
+        >>> handler = SpotifyAPIHandler(...)
+        >>> track_infos = handler.get_track(['7e4G3lltabdGTRQonrKYaY', '3mMWlBGocBwsS1Q0o9wvlc'])
+        >>> track_infos
+        [
+            {
+                "album": {...},
+                "artists": [...],
+                ...
+            },
+            {
+                "album": {...},
+                "artists": [...],
+                ...
+            }
+        ]
+        """
+
+        if 'Authorization' not in self.headers:
+            raise ValueError('Not authenticated, run self.authenticate_client() first')
+
+        params = {'ids': ','.join(track_ids)}
+        response = self.http_get(self.TRACK_URL, params=params)
+
+        return response.json()['tracks']
+
     def get_recommendations(self, metadata: SpotifySongMetadata, limit :int = 1) -> list[str]:
         """
         Get track recommendations based on metadata object.
@@ -249,7 +342,7 @@ class SpotifyAPIHandler:
 
         return response.json()
 
-    def get_multiple_audio_features(self, track_ids: list[str]):
+    def get_multiple_audio_features(self, track_ids: list[str]) -> dict:
         """
         Get audio features of multiple songs by track IDs.
         This is equivalent to looping for track IDs

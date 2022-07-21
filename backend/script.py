@@ -11,8 +11,6 @@ if __name__ == '__main__':
     tags = read_json(MODEL_FILENAME).keys()
 
     for tag in tags:
-        if tag != 'horror_vocal':
-            continue
         metadata = SpotifySongMetadata()
         apply_filter(tag, metadata)
         track_ids = handler.get_recommendations(metadata, limit=1)
