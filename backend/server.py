@@ -1,9 +1,24 @@
-from fastapi import FastAPI, Query
+from fastapi import Query, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from credentials import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
 from spotify_api import SpotifyAPIHandler, SpotifySongMetadata
 from mapping import apply_filter
 
 app = FastAPI()
+
+# Add origins and middleware for CORS
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get(
     '/get-tracks',

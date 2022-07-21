@@ -7,6 +7,9 @@ import {
 import App from "./App";
 import Tags from "./routes/tags";
 import Text from "./routes/text";
+import './index.css';
+// Importing the Bootstrap CSS
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById("root")
