@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import Query, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from credentials import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
 from spotify_api import SpotifyAPIHandler, SpotifySongMetadata
