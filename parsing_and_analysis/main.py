@@ -8,8 +8,14 @@ emotion = pipeline('sentiment-analysis',
                     model='arpanghoshal/EmoRoBERTa')
 
 
-def analyzeText(input):
-    emotion_labels = emotion(input)
+# To use from a different folder: 
+#
+# from parsing_and_analysis.main import analyzeText
+#
+# print(analyzeText("harry potter is great"))
+
+def analyzeText(input_text):
+    emotion_labels = emotion(input_text)
     return emotion_labels
 
 
