@@ -2,14 +2,18 @@ import { useState } from "react";
 import { Button, Container, Col, Form, Row } from 'react-bootstrap';
 
 export default function Tags() {
-  const [spotifyLink, setSpotifyLink] = useState('');
   const [tag, setTag] = useState('');
   const [vocals, setVocals] = useState(false);
   const [numSongs, setNumSongs] = useState('1');
+  const [songInfo, setSongInfo] = useState({
+    name: '',
+    artist: '',
+    link: '',
+    image: '',
+  });
 
   // These boolean states might not be necessary
   const [tagSelected, setTagSelected] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   
 
   const handleRadiobutton = (e) => {
@@ -22,31 +26,40 @@ export default function Tags() {
   }
 
   const handleSubmit = (e) => {
-    setSubmitted(true);
+    
     // Limit the number of recommendations to 1 for now
     let request = 'http://localhost:8000/get-recommendations?mood=' + tag + '&vocals=' + vocals.toString() + '&limit=' + numSongs;
     fetch(request)
       .then(res => res.json())
-      .then(data => setSpotifyLink('https://open.spotify.com/track/' + data));
-    /*
-    // TODO: Get the name of the song
-    console.log(spotifyLink);
-    fetch(spotifyLink)
+      .then(tID => { return fetch('http://localhost:8000/get-tracks?track_ids=' + tID) })
       .then(res => res.json())
-      .then(data => console.log(data));
-    */
+      .then(data => {
+        setSongInfo({
+          artist: data[0].artists[0].name,
+          name: data[0].name,
+          link: data[0].external_urls.spotify,
+          image: data[0].album.images[0].url,
+        })
+      });
   }
 
-  // TODO: Put the name of the song
   const SongLink = () => (
     <p>
       <br/>
       <a 
-        href={spotifyLink} 
+        href={songInfo.link} 
         target="_blank" 
         rel="noreferrer">
-        Spotify link to song
+        <img 
+          src={songInfo.image}
+          alt=''
+          width='256'
+          height='256'>
+        </img>
+        <br/>
+        {songInfo.artist + ' - ' + songInfo.name}
       </a>
+      
     </p>
   )
 
@@ -93,44 +106,8 @@ export default function Tags() {
         >
           Submit
         </Button>
-        {submitted && <SongLink />}
+        {(songInfo.link !== '') && <SongLink />}
       </Form>
     </Container>
   );
-  
-  /*
-  return (
-    <main style={{ padding: "1rem 0" }}>
-      <h2>Select your tags</h2>
-      happy 
-      <input 
-        type="radio" 
-        name="tag" 
-        value="happy"
-        onChange={handleRadiobutton} />
-      {" "} horror 
-      <input 
-        type="radio" 
-        name="tag" 
-        value="horror"
-        onChange={handleRadiobutton} />
-      {" "} sad 
-      <input 
-        type="radio" 
-        name="tag" 
-        value="sad"
-        onChange={handleRadiobutton} />
-      <br/>
-      vocals 
-      <input 
-        type="checkbox" 
-        name="tag" 
-        value="vocals"
-        onChange={handleCheckbox} />
-      <br/>
-      {tagSelected && <Button onClick={handleSubmit}>Submit</Button>}
-      {submitted && <SongLink />}
-    </main>
-  );
-  */
 }
