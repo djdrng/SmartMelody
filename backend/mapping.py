@@ -1,8 +1,9 @@
 from utils import read_json
 from config import MODEL_FILENAME
+from spotify_api import SpotifySongMetadata
 
 
-def apply_filter(tagname, metadata):
+def apply_filter(tagname: str, metadata: SpotifySongMetadata):
     """
     Apply filter to metadata object using tag name.
     Data in model.json is used to get the appropriate filter values.
