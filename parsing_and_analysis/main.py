@@ -7,15 +7,13 @@ model = TFRobertaForSequenceClassification.from_pretrained("arpanghoshal/EmoRoBE
 emotion = pipeline('sentiment-analysis', 
                     model='arpanghoshal/EmoRoBERTa')
 
-
-# To use from a different folder: 
-#
-# from parsing_and_analysis.main import analyzeText
-#
-# print(analyzeText("harry potter is great"))
-
+# takes in a string of text and outputs it's sentiment analysis as an dictionary array ie:
+# [{'label': 'admiration', 'score': 0.9948461055755615}]
 def analyzeText(input_text):
+    """
+    To call this function from a different folder: 
+    from parsing_and_analysis.main import analyzeText
+    print(analyzeText("harry potter is great"))
+    """
     emotion_labels = emotion(input_text)
     return emotion_labels
-
-
