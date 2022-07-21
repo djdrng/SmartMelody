@@ -34,9 +34,3 @@ if __name__ == '__main__':
       print(len(timbre[i]))
     
     plt.show()
-
-  model_data = read_json(MODEL_FILENAME)
-  model = model_data.get(tagname)
-  if model is not None:
-    for track in model['seed_tracks'].split(','):
-      aa = handler.get_audio_analysis(track)['segments']
