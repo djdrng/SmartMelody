@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Query
 from credentials import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
-from spotify_api import SpotifyAPIHandler, SpotifySongMetadata
+from spotify_api import SpotifyAPIHandler
+from spotify_metadata import SpotifySongMetadata
 from mapping import apply_filter
 
 app = FastAPI()
@@ -48,3 +49,36 @@ async def get_recommendations(
     track_ids = handler.get_recommendations(metadata, limit=limit)
 
     return track_ids
+
+@app.get(
+    '/login-user',
+    summary='Generate link to prompt user for login',
+    response_description='URL to be visited, that will prompt user login',
+)
+async def login_user(
+) -> list[str]:
+    handler = SpotifyAPIHandler(
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET,
+        redirect_uri=REDIRECT_URI,
+    )
+
+    url = handler.login_user()
+    return url
+
+@app.get(
+    '/get-access-token',
+    summary='Get Access Token for User that is Logged in',
+    response_description='',
+)
+async def get_access_token(code: str
+) -> list[str]:
+    handler = SpotifyAPIHandler(
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET,
+        redirect_uri=REDIRECT_URI,
+    )
+
+    #response = handler.get_access_token(code)
+    return code
+

@@ -1,128 +1,9 @@
-import itertools
+from numpy import gradient
 import requests
-import json
-import random
-# from spotipy import Spotify
-# from spotipy.oauth2 import SpotifyOAuth
-
-
-class SpotifySongMetadata:
-    def __init__(self) -> None:
-        # dictionary for holding metadata parameters
-        self.metadata = {}
-
-        # seed parameters
-        # these are required parameters for recommendations
-        self.seed_attrs = [
-            'seed_artists',
-            'seed_genres',
-            'seed_tracks',
-        ]
-
-        valid_fraction = lambda x: x >= 0.0 and x <= 1.0
-        # prefixes for numerical parameters
-        prefixes = [
-            'target',
-            'min',
-            'max',
-        ]
-        # numerical parameter validators
-        # dictionary, where key is name of the prefix-less attribute
-        # and value is a function that validates the value of the attribute
-        numerical_attr_validators = {
-            'acousticness': valid_fraction,
-            'danceability': valid_fraction,
-            'energy': valid_fraction,
-            'instrumentalness': valid_fraction,
-            'liveness': valid_fraction,
-            'loudness': lambda x: x <= 0,
-            'mode': lambda x: x in (0, 1),
-            'speechiness': valid_fraction,
-            'valence': valid_fraction,
-        }
-
-        # add prefixes to all numerical attributes
-        self.numerical_attrs = {
-            f'{i[0]}_{i[1]}': numerical_attr_validators[i[1]]
-            for i in itertools.product(prefixes, numerical_attr_validators)
-        }
-
-    def set(self, attr: str, value: any) -> None:
-        """
-        Set attribute value
-        """
-        if attr in self.seed_attrs:
-            # seed attributes should be comma separated strings
-            # this converts list of strings to comma separated string
-            if not isinstance(value, str):
-                value = ','.join(value)
-        elif attr in self.numerical_attrs:
-            if not self.numerical_attrs[attr](value):
-                raise ValueError(
-                    f'Invalid value {value} for attribute "{attr}"'
-                )
-        else:
-            raise ValueError(f'Invalid attribute "{attr}"')
-
-        self.metadata[attr] = value
-
-    def set_from_dict(self, metadata_dict: dict) -> None:
-        """
-        Set attributes from dictionary.
-        """
-        for attr, value in metadata_dict.items():
-            self.set(attr, value)
-
-    # get value of attribute
-    # returns None if attribute hasn't been set
-    def get(self, attr: str) -> any:
-        """
-        Get value of attribute.
-        Returns None if attribute hasn't been set.
-        """
-
-        if attr not in self.seed_attrs and attr not in self.numerical_attrs:
-            raise ValueError(f'Invalid attribute "{attr}"')
-
-        return self.metadata.get(attr)
-
-    def randomize_seeds(self, limit=5) -> None:
-        """
-        Randomly sample from the seed values
-        and get rid of the rest of them.
-        This is for executing before getting a song recommendation.
-        Spotify requires that there are at most 5 seed values.
-        """
-
-        for attr in self.seed_attrs:
-            value = self.metadata.get(attr)
-
-            if value is not None:
-                # convert comma separated string to list fof strings
-                value = value.strip().split(',')
-                # choose a sample of seed values
-                seed_subset = random.sample(value, min(limit, len(value)))
-                # convert list of strings back to comma separated string
-                value = ','.join(seed_subset)
-
-                self.metadata[attr] = value
-
-    # get metadata dictionary
-    def dict(self) -> dict:
-        return self.metadata
-
-    # get metadata iterator for dictionary conversion
-    def __iter__(self) -> any:
-        for attr in self.metadata:
-            yield (attr, self.metadata[attr])
-
-    # convert and return metadata dictionary to string
-    def __str__(self) -> str:
-        return str(self.metadata)
-
-    # convert and return metadata dictionary to pretty formatted string
-    def __repr__(self) -> str:
-        return json.dumps(self.metadata, sort_keys=True, indent=4)
+import string
+from secrets import choice
+from urllib.parse import urlencode
+from spotify_metadata import SpotifySongMetadata
 
 class SpotifyAPIHandler:
     def __init__(self, client_id: str, client_secret: str, redirect_uri: str) -> None:
@@ -142,31 +23,48 @@ class SpotifyAPIHandler:
         self.AUDIO_FEATURES_URL = self.BASE_URL + 'audio-features/'
         self.AUDIO_ANALYSIS_URL = self.BASE_URL + 'audio-analysis/'
         self.RECOMMENDATIONS_URL = self.BASE_URL + 'recommendations/'
+        self.PLAYBACK_URL = self.BASE_URL + 'me/player/'
+        self.PLAY_URL = self.PLAYBACK_URL + 'play/'
 
         self.authenticate_client()
 
-    def http_get(self, url: str, *args: tuple[any, ...], **kwargs: dict[str, any]) -> any:
+    def __http_get(self, url: str, *args: tuple[any, ...], **kwargs: dict[str, any]) -> any:
         """
         HTTP GET Request
         """
+        headers = self.headers
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+            kwargs.pop('headers')
+        return requests.get(url, headers=headers, *args, **kwargs)
 
-        return requests.get(url, headers=self.headers, *args, **kwargs)
-
-    def http_post(self, url: str, *args: tuple[any, ...], **kwargs: dict[str, any]) -> any:
+    def __http_post(self, url: str, *args: tuple[any, ...], **kwargs: dict[str, any]) -> any:
         """
         HTTP POST Request
         """
+        headers = self.headers
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+            kwargs.pop('headers')
+        return requests.post(url, headers=headers, *args, **kwargs)
 
-        return requests.post(url, headers=self.headers, *args, **kwargs)
-
-
+    def __http_put(self, url: str, *args: tuple[any, ...], **kwargs: dict[str, any]) -> any:
+        """
+        HTTP PUT Request
+        """
+        headers = self.headers
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+            kwargs.pop('headers')
+        return requests.put(url, headers=headers, *args, **kwargs)
+    
     def authenticate_client(self) -> None:
         """
         Authenticate client using client credentials flow.
         This must be done before sending HTTP requests.
         """
 
-        auth_response = self.http_post(
+        auth_response = self.__http_post(
             self.TOKEN_URL,
             data = {
                 'grant_type': 'client_credentials',
@@ -181,20 +79,47 @@ class SpotifyAPIHandler:
 
         # authorization header
         self.headers['Authorization'] = f'Bearer {access_token}'
+    
+    def login_user(self) -> any:
+        """
+        Generate a URL to send user to Spotify authentication page.
+        Once this link is visited, it should redirect the user to REDIRECT_URI, set in credentials.py
+        """
 
-    # commenting this out for now since we're not using oauth yet:
-    # def oauth_user(self):
-    #     oauth = SpotifyOAuth(
-    #         client_id=self.client_id,
-    #         client_secret=self.client_secret,
-    #         redirect_uri=self.redirect_uri,
-    #         scope="user-library-read,user-modify-playback-state"
-    #     )
+        if 'Authorization' not in self.headers:
+            raise ValueError('Not authenticated, run self.authenticate_client() first')
 
-    #     self.spotipy = Spotify(auth_manager=oauth)
+        params = {
+            'client_id': self.client_id,
+            'response_type': 'code',
+            'redirect_uri': self.redirect_uri,
+            'state': ''.join(
+                choice(string.ascii_uppercase + string.digits) for _ in range(16)
+            ),
+            'scope': 'user-modify-playback-state',
+            'show_dialog': True
+        } 
+        return f'{self.AUTH_URL}?{urlencode(params)}'
+    
+    def get_access_token(self, code: str) -> None:
+        """
+        Get the Access Token for the user logged in.
 
-    # def start_user_playback(self, track_uri: str):
-    #     self.spotipy.start_playback(uris=track_uri)
+        Parameters:
+            code (str): The access code returned from the login request
+        """
+
+        params = {
+            'grant_type': 'authorization_code',
+            'code': code,
+            'redirect_uri': self.redirect_uri
+        }
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+        response = self.__http_post(self.TOKEN_URL, headers=headers, params=params)
+        return response
+
 
     def get_track(self, track_id: str) -> dict:
         """
@@ -249,7 +174,7 @@ class SpotifyAPIHandler:
         if 'Authorization' not in self.headers:
             raise ValueError('Not authenticated, run self.authenticate_client() first')
 
-        response = self.http_get(self.TRACK_URL + track_id)
+        response = self.__http_get(self.TRACK_URL + track_id)
 
         return response.json()
 
@@ -284,7 +209,7 @@ class SpotifyAPIHandler:
             raise ValueError('Not authenticated, run self.authenticate_client() first')
 
         params = {'ids': ','.join(track_ids)}
-        response = self.http_get(self.TRACK_URL, params=params)
+        response = self.__http_get(self.TRACK_URL, params=params)
 
         return response.json()['tracks']
 
@@ -313,7 +238,7 @@ class SpotifyAPIHandler:
         # convert metadata to dictionary of request parameters
         params = dict(metadata.dict(), limit=limit)
 
-        response = self.http_get(self.RECOMMENDATIONS_URL, params=params)
+        response = self.__http_get(self.RECOMMENDATIONS_URL, params=params)
         # get track IDs from response
         track_ids = [track['id'] for track in response.json().get('tracks', [])]
 
@@ -339,7 +264,7 @@ class SpotifyAPIHandler:
         if 'Authorization' not in self.headers:
             raise ValueError('Not authenticated, run self.authenticate_client() first')
 
-        response = self.http_get(self.AUDIO_FEATURES_URL + track_id)
+        response = self.__http_get(self.AUDIO_FEATURES_URL + track_id)
 
         return response.json()
 
@@ -369,7 +294,7 @@ class SpotifyAPIHandler:
 
         # great comma separated string of IDs
         params = {'ids': ','.join(track_ids)}
-        response = self.http_get(self.AUDIO_FEATURES_URL, params=params)
+        response = self.__http_get(self.AUDIO_FEATURES_URL, params=params)
 
         # set up dictionary of audio features
         features_data = {}
@@ -405,6 +330,38 @@ class SpotifyAPIHandler:
         if 'Authorization' not in self.headers:
             raise ValueError('Not authenticated, run self.authenticate_client() first')
 
-        response = self.http_get(self.AUDIO_ANALYSIS_URL + track_id)
+        response = self.__http_get(self.AUDIO_ANALYSIS_URL + track_id)
 
         return response.json()
+
+    def playback_track(self, track_ids: list[str], context_uri: str = None) -> None:
+        """
+        Starts audio playback on the user's spotify account.
+
+        Parameters:
+            track_ids (list(str)): The list of track uri's to playback
+
+        Optional Parameters:
+            context_uri (str): The album, playlist or genre seed to continue additional playback
+        
+        Returns:
+            None
+        """
+
+        if 'Authorization' not in self.headers:
+            raise ValueError('Not authenticated, run self.authenticate_client() first')
+
+        params = {
+            'context_uri': context_uri,
+            'uris': track_ids
+        }
+
+        response = self.__http_put(self.PLAY_URL, params=params)
+
+        if response.status_code == 403:
+            raise ValueError('Premium Account not detected, run self.login_user() and follow login URL')
+        
+        print(response.json())
+
+
+

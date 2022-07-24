@@ -1,6 +1,6 @@
 from utils import read_json
 from config import MODEL_FILENAME
-from spotify_api import SpotifySongMetadata
+from spotify_metadata import SpotifySongMetadata
 
 
 def apply_filter(tagname: str, metadata: SpotifySongMetadata):
