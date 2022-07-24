@@ -362,4 +362,3 @@ class SpotifyAPIHandler:
             raise ValueError('Premium Account not detected, run self.login_user() and follow login URL')
         
         print(response.json())
-
