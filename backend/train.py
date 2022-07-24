@@ -1,7 +1,8 @@
 import numpy as np
 from scipy.stats import t, sem
 from utils import read_json, save_json
-from spotify_api import SpotifyAPIHandler, SpotifySongMetadata
+from spotify_api import SpotifyAPIHandler
+from spotify_metadata import SpotifySongMetadata
 from credentials import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
 from config import TAGS_OF_INTEREST, TRAINING_FILENAME, MODEL_FILENAME
 
