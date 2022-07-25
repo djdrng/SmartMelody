@@ -46,3 +46,10 @@ python3 train.py
 ## API Documentation
 
 ![API Docs](../img/api_docs_screenshot.png)
+
+## Running Sentiment Analysis Requirements
+
+*Ensure you are using python 3.7+
+
+1. pip3 install transformers
+2. pip3 install tensorflow

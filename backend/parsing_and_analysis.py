@@ -12,7 +12,7 @@ emotion = pipeline('sentiment-analysis',
 def analyzeText(input_text):
     """
     To call this function from a different folder: 
-    from parsing_and_analysis.main import analyzeText
+    from parsing_and_analysis import analyzeText
     print(analyzeText("harry potter is great"))
     """
     emotion_labels = emotion(input_text)
