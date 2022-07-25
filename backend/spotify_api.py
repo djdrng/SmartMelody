@@ -1,9 +1,11 @@
-from numpy import gradient
+from multiprocessing.sharedctypes import Value
 import requests
 import string
 from secrets import choice
 from urllib.parse import urlencode
 from spotify_metadata import SpotifySongMetadata
+import base64
+from datetime import date, datetime
 
 class SpotifyAPIHandler:
     def __init__(self, client_id: str, client_secret: str, redirect_uri: str) -> None:
@@ -58,6 +60,14 @@ class SpotifyAPIHandler:
             kwargs.pop('headers')
         return requests.put(url, headers=headers, *args, **kwargs)
     
+    def validate_tokens(self) -> None:
+        """
+        Validate that the current authorization token is still valid.
+        If it is invalid, call refresh_tokens to request a new token.
+        """
+        if self.token_expiry < datetime.now().timestamp():
+            self.refresh_tokens()
+    
     def authenticate_client(self) -> None:
         """
         Authenticate client using client credentials flow.
@@ -89,37 +99,82 @@ class SpotifyAPIHandler:
         if 'Authorization' not in self.headers:
             raise ValueError('Not authenticated, run self.authenticate_client() first')
 
+        self.state = ''.join(choice(string.ascii_uppercase + string.digits) for _ in range(16)) 
+
         params = {
             'client_id': self.client_id,
             'response_type': 'code',
             'redirect_uri': self.redirect_uri,
-            'state': ''.join(
-                choice(string.ascii_uppercase + string.digits) for _ in range(16)
-            ),
+            'state': self.state,
             'scope': 'user-modify-playback-state',
             'show_dialog': True
         } 
         return f'{self.AUTH_URL}?{urlencode(params)}'
     
-    def get_access_token(self, code: str) -> None:
+    def authenticate_user(self, code: str, redirect_state: str) -> None:
         """
-        Get the Access Token for the user logged in.
+        Setup access token for the user that is logged in
 
         Parameters:
             code (str): The access code returned from the login request
+            redirect_state (str): The state returned from the redirect.
+            If it doesn't match self.state, will deny request.
         """
+
+        if self.state != redirect_state:
+            raise ValueError('Mismatched redirect_state variable, please perform login steps again.')
 
         params = {
             'grant_type': 'authorization_code',
             'code': code,
             'redirect_uri': self.redirect_uri
         }
+        data = f'{self.client_id}:{self.client_secret}'
         headers = {
+            'Authorization': f'Basic {base64.urlsafe_b64encode(data.encode()).decode()}',
             'Content-Type': 'application/x-www-form-urlencoded'
         }
-        response = self.__http_post(self.TOKEN_URL, headers=headers, params=params)
-        return response
+        response = self.__http_post(self.TOKEN_URL, headers=headers, params=urlencode(params))
 
+        if response.status_code != 200:
+            raise ValueError('Issue requesting access token for user. Please rerun login-user()')
+
+        # save the access token and the expires_in time
+        response_data = response.json()
+        access_token = response_data['access_token']
+        expires_in = response_data['expires_in']
+
+        # set authorization header and time of expiry
+        self.headers['Authorization'] = f'Bearer {access_token}'
+        self.token_expiry = datetime.now().timestamp() + expires_in
+        self.refresh_token = response_data['refresh_token']
+
+    def refresh_tokens(self) -> None:
+        """
+        Refresh the user access tokens. Will reset self.headers and self.token_expiry
+        """
+        params = {
+            'grant_type': 'refresh_token',
+            'refresh_token': self.refresh_token
+        }
+        data = f'{self.client_id}:{self.client_secret}'
+        headers = {
+            'Authorization': f'Basic {base64.urlsafe_b64encode(data.encode()).decode()}',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+        response = self.__http_post(self.TOKEN_URL, headers=headers, params=urlencode(params))
+
+        if response.status_code != 200:
+            raise ValueError('Issue requesting access token for user. Please rerun login-user()')
+
+        # save the access token and the expires_in time
+        response_data = response.json()
+        access_token = response_data['access_token']
+        expires_in = response_data['expires_in']
+
+        # set authorization header and time of expiry
+        self.headers['Authorization'] = f'Bearer {access_token}'
+        self.token_expiry = datetime.now().timestamp() + expires_in
 
     def get_track(self, track_id: str) -> dict:
         """
@@ -350,6 +405,8 @@ class SpotifyAPIHandler:
 
         if 'Authorization' not in self.headers:
             raise ValueError('Not authenticated, run self.authenticate_client() first')
+        
+        self.validate_tokens()
 
         params = {
             'context_uri': context_uri,
