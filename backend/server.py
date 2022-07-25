@@ -44,7 +44,7 @@ async def get_tracks(
     response_description='List of moods',
 )
 async def get_tracks() -> list[str]:
-    return get_moods()
+    return sorted(get_moods())
 
 @app.get(
     '/get-recommendations',

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, Container, Col, Form, Row } from 'react-bootstrap';
 
 export default function Tags() {
@@ -10,6 +10,14 @@ export default function Tags() {
     artist: '',
     link: '',
     image: '',
+  });
+  const [moods, setMoods] = useState([]);
+
+  useEffect(() => {
+    let request = 'http://localhost:8000/get-moods';
+    fetch(request)
+      .then(res => res.json())
+      .then(data => setMoods(data))
   });
 
   // These boolean states might not be necessary
@@ -71,7 +79,7 @@ export default function Tags() {
           <h3>Select your tags</h3>
           <Col>
             <h3>Mood</h3>
-            {['happy', 'sad', 'horror'].map((tag) => (
+            {moods.map((tag) => (
               <div key={tag} className="mb-3">
                 <Form.Check 
                   name='tag'
