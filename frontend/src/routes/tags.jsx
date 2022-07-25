@@ -18,7 +18,7 @@ export default function Tags() {
     fetch(request)
       .then(res => res.json())
       .then(data => setMoods(data))
-  });
+  }, []);
 
   // These boolean states might not be necessary
   const [tagSelected, setTagSelected] = useState(false);
