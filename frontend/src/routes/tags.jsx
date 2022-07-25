@@ -48,7 +48,7 @@ export default function Tags() {
           name: data[0].name,
           link: data[0].external_urls.spotify,
           image: data[0].album.images[0].url,
-          mp3: data[0].preview_url,
+          mp3: data[0].preview_url == null ? '' : data[0].preview_url,
         })
       });
   }
@@ -69,7 +69,11 @@ export default function Tags() {
         <br/>
         {songInfo.artist + ' - ' + songInfo.name}
       </a>
-      <br/>
+    </p>
+  )
+
+  const SongPlayer = () => (
+    <p>
       <audio controls>
         <source 
           src={songInfo.mp3}
@@ -123,6 +127,7 @@ export default function Tags() {
           Submit
         </Button>
         {(songInfo.link !== '') && <SongLink />}
+        {((songInfo.mp3 !== '') && <SongPlayer />)  || ((songInfo.mp3 === '') && <p>No preview available</p>)}
       </Form>
     </Container>
   );
