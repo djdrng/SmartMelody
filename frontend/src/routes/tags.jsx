@@ -10,6 +10,7 @@ export default function Tags() {
     artist: '',
     link: '',
     image: '',
+    mp3: '',
   });
   const [moods, setMoods] = useState([]);
 
@@ -47,6 +48,7 @@ export default function Tags() {
           name: data[0].name,
           link: data[0].external_urls.spotify,
           image: data[0].album.images[0].url,
+          mp3: data[0].preview_url,
         })
       });
   }
@@ -67,7 +69,13 @@ export default function Tags() {
         <br/>
         {songInfo.artist + ' - ' + songInfo.name}
       </a>
-      
+      <br/>
+      <audio controls>
+        <source 
+          src={songInfo.mp3}
+          type="audio/mp3"
+        />
+      </audio>
     </p>
   )
 
