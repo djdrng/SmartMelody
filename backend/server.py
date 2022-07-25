@@ -2,7 +2,7 @@ from fastapi import Query, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from credentials import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
 from spotify_api import SpotifyAPIHandler, SpotifySongMetadata
-from mapping import apply_filter
+from mapping import apply_filter, get_moods
 
 app = FastAPI()
 
@@ -37,6 +37,14 @@ async def get_tracks(
     track_infos = handler.get_multiple_tracks(track_ids)
 
     return track_infos
+
+@app.get(
+    '/get-moods',
+    summary='Get available mood categories',
+    response_description='List of moods',
+)
+async def get_tracks() -> list[str]:
+    return get_moods()
 
 @app.get(
     '/get-recommendations',
