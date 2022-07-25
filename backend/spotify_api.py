@@ -2,6 +2,7 @@ from multiprocessing.sharedctypes import Value
 from numpy import gradient
 import requests
 import string
+import json
 from secrets import choice
 from urllib.parse import urlencode
 from spotify_metadata import SpotifySongMetadata
@@ -112,7 +113,7 @@ class SpotifyAPIHandler:
         } 
         return f'{self.AUTH_URL}?{urlencode(params)}'
     
-    def authenticate_user(self, code: str, redirect_state: str) -> None:
+    def authenticate_user(self, code: str, redirect_state: str, ignore_state: bool = False) -> None:
         """
         Setup access token for the user that is logged in
 
@@ -120,10 +121,14 @@ class SpotifyAPIHandler:
             code (str): The access code returned from the login request
             redirect_state (str): The state returned from the redirect.
             If it doesn't match self.state, will deny request.
+        
+        Optional Parameters:
+            ignore_state (bool): TEST ONLY, bypass the state comparison
         """
-
-        if self.state != redirect_state:
-            raise ValueError('Mismatched redirect_state variable, please perform login steps again.')
+        
+        if not ignore_state:
+            if self.state != redirect_state:
+                raise ValueError('Mismatched redirect_state variable, please perform login steps again.')
 
         params = {
             'grant_type': 'authorization_code',
@@ -429,14 +434,17 @@ class SpotifyAPIHandler:
         
         self.validate_tokens()
 
-        params = {
-            'context_uri': context_uri,
+        headers = {
+            'Content-Type': 'application/json'
+        }
+
+        data = {
             'uris': track_ids
         }
 
-        response = self.__http_put(self.PLAY_URL, params=params)
+        response = self.__http_put(self.PLAY_URL, headers=headers, data=json.dumps(data))
 
         if response.status_code == 403:
-            raise ValueError('Premium Account not detected, run self.login_user() and follow login URL')
-        
-        print(response.json())
+            raise ValueError('Issue with Playback. Did you run login_user() and authenticate_user()?')
+
+        print(response.status_code)

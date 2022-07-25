@@ -1,104 +1,24 @@
-from fastapi import Query, FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from credentials import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
-from spotify_api import SpotifyAPIHandler
-from spotify_metadata import SpotifySongMetadata
+from spotify_api import SpotifyAPIHandler, SpotifySongMetadata
 from mapping import apply_filter
+from credentials import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
+from utils import read_json
+from config import MODEL_FILENAME
 
-app = FastAPI()
 
-# Add origins and middleware for CORS
-origins = [
-    "http://localhost",
-    "http://localhost:3000",
-]
+if __name__ == '__main__':
+    handler = SpotifyAPIHandler(client_id=CLIENT_ID, client_secret=CLIENT_SECRET, redirect_uri=REDIRECT_URI)
+    login_url = handler.login_user()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+    # Now visit login URL
+    print('LOGIN_URL:', login_url)
 
-@app.get(
-    '/get-tracks',
-    summary='Get track information from Spotify track IDs',
-    response_description='List of track information',
-)
-async def get_tracks(
-    track_ids: list[str] = Query(..., description='List of Spotify track IDs',
-)) -> dict[any]:
-    handler = SpotifyAPIHandler(
-        client_id=CLIENT_ID,
-        client_secret=CLIENT_SECRET,
-        redirect_uri=REDIRECT_URI,
-    )
+    # manually set access token and token expiry from response
+    handler.headers['Authorization'] = input('ACCESS TOKEN FROM RESPONSE')
+    handler.token_expiry = float(input('TOKEN EXPIRY FROM RESPONSE'))
 
-    track_infos = handler.get_multiple_tracks(track_ids)
+    print(handler.headers)
 
-    return track_infos
+    # Play a song!
+    handler.playback_track(['spotify:track:2o3VdzVj1qRGJpLI5y2qMj'])
 
-@app.get(
-    '/get-recommendations',
-    summary='Get track recommendation based on mood',
-    response_description='List of recommended tracks',
-)
-async def get_recommendations(
-    mood: str = Query(..., description='Specific mood ("happy", "sad", etc.)'),
-    vocals: bool = Query(..., description='If true, recommends tracks with vocals, otherwise recommends instrumental tracks'),
-    limit: int = Query(default=1, description='Number of tracks to recommend'),
-) -> list[str]:
-    handler = SpotifyAPIHandler(
-        client_id=CLIENT_ID,
-        client_secret=CLIENT_SECRET,
-        redirect_uri=REDIRECT_URI,
-    )
-
-    tag = mood + '_' + 'instrumental'
-    if vocals:
-        tag = mood + '_' + 'vocal'
-
-    metadata = SpotifySongMetadata()
-    apply_filter(tag, metadata)
-    track_ids = handler.get_recommendations(metadata, limit=limit)
-
-    return track_ids
-
-@app.get(
-    '/login-user',
-    summary='Generate link to prompt user for login',
-    response_description='URL to be visited, that will prompt user login',
-)
-async def login_user(
-) -> list[str]:
-    handler = SpotifyAPIHandler(
-        client_id=CLIENT_ID,
-        client_secret=CLIENT_SECRET,
-        redirect_uri=REDIRECT_URI,
-    )
-
-    url = handler.login_user()
-    return url
-
-@app.get(
-    '/get-access-token',
-    summary='Get Access Token for User that is Logged in',
-    response_description='responds with the access token, expiry time and refresh token',
-)
-async def get_access_token(code: str, state: str
-) -> list[str]:
-    handler = SpotifyAPIHandler(
-        client_id=CLIENT_ID,
-        client_secret=CLIENT_SECRET,
-        redirect_uri=REDIRECT_URI,
-    )
-
-    handler.authenticate_user(code, state)
-    response = {
-        'access_token': handler.headers['Authorization'],
-        'expiry_timestamp': handler.token_expiry,
-        'refresh_token': handler.refresh_token
-    }
-    return response
 

@@ -102,7 +102,7 @@ async def get_access_token(code: str, state: str
         redirect_uri=REDIRECT_URI,
     )
 
-    handler.authenticate_user(code, state)
+    handler.authenticate_user(code, state, ignore_state=True)
     response = {
         'access_token': handler.headers['Authorization'],
         'expiry_timestamp': handler.token_expiry,
