@@ -1,4 +1,5 @@
 from multiprocessing.sharedctypes import Value
+from numpy import gradient
 import requests
 import string
 from secrets import choice
@@ -175,6 +176,26 @@ class SpotifyAPIHandler:
         # set authorization header and time of expiry
         self.headers['Authorization'] = f'Bearer {access_token}'
         self.token_expiry = datetime.now().timestamp() + expires_in
+
+    def get_access_token(self, code: str) -> None:
+        """
+        Get the Access Token for the user logged in.
+
+        Parameters:
+            code (str): The access code returned from the login request
+        """
+
+        params = {
+            'grant_type': 'authorization_code',
+            'code': code,
+            'redirect_uri': self.redirect_uri
+        }
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+        response = self.__http_post(self.TOKEN_URL, headers=headers, params=params)
+        return response
+
 
     def get_track(self, track_id: str) -> dict:
         """
