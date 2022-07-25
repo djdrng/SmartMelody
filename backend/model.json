@@ -1,4 +1,22 @@
 {
+    "angry_instrumental": {
+        "max_acousticness": 0.00203278829078771,
+        "max_instrumentalness": 0.8111365364312401,
+        "max_speechiness": 0.13252103107490681,
+        "max_valence": 0.3864302076549925,
+        "min_danceability": 0.5595275303560568,
+        "min_energy": 0.9249701736111777,
+        "seed_tracks": "7sn0OyaKn1XKx18JjUZkSw,3FUZpoj9VV0sgc8RqbS3xQ,3UGe9YVS1ooqw0QmKnxt1m,69B0nDESepCnUP39jLCPx0,2NRKqJK2nFpr0VHn74EwhV,26s79pNvksAh8tlEembKm3"
+    },
+    "angry_vocal": {
+        "max_acousticness": 0.1194706839676612,
+        "max_instrumentalness": 0.03278480796430243,
+        "max_speechiness": 0.15570225854975686,
+        "max_valence": 0.5492996180910426,
+        "min_danceability": 0.4702561032118763,
+        "min_energy": 0.7091197837227521,
+        "seed_tracks": "15JINEqzVMv3SvJTAXAKED,4jbmgIyjGoXjY01XxatOx6,1zB4vmk8tFRmM9UULNzbLB,1UuxN6k7kLSLdS6z0NJw5c,0kYMwaQWABTkFff8AZjmYI,71Mb3m1twBm6j4TfoeZ1Mt,7LreOeI2fjI47zKUmIWjLC,3JyvSSU0VnlMUsQckyEVfX,5gWtkdgdyt5bZt9i6n3Kqd,1Q2fYlSdwuutWj3QplhY9q,6V81K1OcvYgHEnCA6A2Qx9,4qn2rc3Y91HUSCzC61z6qa,0dyWQoMOU9oERL6c9vxtRp"
+    },
     "happy_instrumental": {
         "max_acousticness": 0.4727109413285636,
         "max_speechiness": 0.09848461298097062,
@@ -34,6 +52,24 @@
         "max_valence": 0.36830720854778287,
         "min_acousticness": 0.2480701850102795,
         "seed_tracks": "7e4G3lltabdGTRQonrKYaY,4XqmIO6Rhx158OgvDIq4Xq,6EtUzfEp4tBk4r4ymq0vEF,7jHhi7TwGrLIAheHBXnOFy,5y87ZIVaTRf35g64LMHpoH,3uGvXX9ol5aySJVrSKD1xx"
+    },
+    "motivational_instrumental": {
+        "max_acousticness": 0.4356475734234635,
+        "max_danceability": 0.4089429832675139,
+        "max_speechiness": 0.09487106819245128,
+        "max_valence": 0.34148599973768523,
+        "min_energy": 0.5625898910909402,
+        "min_instrumentalness": 0.7846450828825933,
+        "seed_tracks": "6yw8TTAKPP2pkAqhNpsTym,5pwpaopSb3Ry1BwcNN2jiJ,50o13VmOJiUj3WfU7XmEAn,3j9WvPrVhZuH8AmTeVakfR,0hHc2igYYlSUyZdByauJmB,59h3i22MBicerNR1llNXqv,2WnXVCp9AXZfFOWVTEHV0i,7L7XzsEDNRGgVsAixpiba4,0U1X5zc0wvbT6C3YQEpK0q,5SXsXjVJCWeJuf7FHvgBYR,6Q6G9OIyiehtUDmSOGCLCF"
+    },
+    "motivational_vocal": {
+        "max_acousticness": 0.10106774837555793,
+        "max_instrumentalness": 0.0007000540459703411,
+        "max_speechiness": 0.15217620369859325,
+        "max_valence": 0.4876658979989994,
+        "min_danceability": 0.4503512328831767,
+        "min_energy": 0.7225068510276594,
+        "seed_tracks": "61HQWI1Woxup7CnGwVUsdI,1X1DWw2pcNZ8zSub3uhlNz,7s1SC0ymhSFkYtigMXu9Pe,03EFRRLX44QMmMhgobkcvH,6Iocm6VMu6bVNYwiDoyQFW,1lgN0A2Vki2FTON5PYq42m,26S6Tl7KZCzrc3JHVhdLQZ,2Xaw1RrXP3mdooKWysuRJ8,69Sy7207dnixZ6w7RSV9Kb,1FpVJ7HpZInE2GvhVE2TwT,6zAiRKvAMlXHxEtyO4yxIO,6zAiRKvAMlXHxEtyO4yxIO,0pqnGHJpmpxLKifKRmU6WP,0Altlm3kLPob56k2qqR4i2"
     },
     "sad_instrumental": {
         "max_energy": 0.2800018039186347,

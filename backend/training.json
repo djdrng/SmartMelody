@@ -1,4 +1,27 @@
 {
+    "angry_instrumental": [
+        "7sn0OyaKn1XKx18JjUZkSw",
+        "3FUZpoj9VV0sgc8RqbS3xQ",
+        "3UGe9YVS1ooqw0QmKnxt1m",
+        "69B0nDESepCnUP39jLCPx0",
+        "2NRKqJK2nFpr0VHn74EwhV",
+        "26s79pNvksAh8tlEembKm3"
+    ],
+    "angry_vocal": [
+        "15JINEqzVMv3SvJTAXAKED",
+        "4jbmgIyjGoXjY01XxatOx6",
+        "1zB4vmk8tFRmM9UULNzbLB",
+        "1UuxN6k7kLSLdS6z0NJw5c",
+        "0kYMwaQWABTkFff8AZjmYI",
+        "71Mb3m1twBm6j4TfoeZ1Mt",
+        "7LreOeI2fjI47zKUmIWjLC",
+        "3JyvSSU0VnlMUsQckyEVfX",
+        "5gWtkdgdyt5bZt9i6n3Kqd",
+        "1Q2fYlSdwuutWj3QplhY9q",
+        "6V81K1OcvYgHEnCA6A2Qx9",
+        "4qn2rc3Y91HUSCzC61z6qa",
+        "0dyWQoMOU9oERL6c9vxtRp"
+    ],
     "happy_instrumental": [
         "2o3VdzVj1qRGJpLI5y2qMj",
         "5GzllvwuJMnljMJRHME784",
@@ -98,6 +121,35 @@
         "7jHhi7TwGrLIAheHBXnOFy",
         "5y87ZIVaTRf35g64LMHpoH",
         "3uGvXX9ol5aySJVrSKD1xx"
+    ],
+    "motivational_instrumental": [
+        "6yw8TTAKPP2pkAqhNpsTym",
+        "5pwpaopSb3Ry1BwcNN2jiJ",
+        "50o13VmOJiUj3WfU7XmEAn",
+        "3j9WvPrVhZuH8AmTeVakfR",
+        "0hHc2igYYlSUyZdByauJmB",
+        "59h3i22MBicerNR1llNXqv",
+        "2WnXVCp9AXZfFOWVTEHV0i",
+        "7L7XzsEDNRGgVsAixpiba4",
+        "0U1X5zc0wvbT6C3YQEpK0q",
+        "5SXsXjVJCWeJuf7FHvgBYR",
+        "6Q6G9OIyiehtUDmSOGCLCF"
+    ],
+    "motivational_vocal": [
+        "61HQWI1Woxup7CnGwVUsdI",
+        "1X1DWw2pcNZ8zSub3uhlNz",
+        "7s1SC0ymhSFkYtigMXu9Pe",
+        "03EFRRLX44QMmMhgobkcvH",
+        "6Iocm6VMu6bVNYwiDoyQFW",
+        "1lgN0A2Vki2FTON5PYq42m",
+        "26S6Tl7KZCzrc3JHVhdLQZ",
+        "2Xaw1RrXP3mdooKWysuRJ8",
+        "69Sy7207dnixZ6w7RSV9Kb",
+        "1FpVJ7HpZInE2GvhVE2TwT",
+        "6zAiRKvAMlXHxEtyO4yxIO",
+        "6zAiRKvAMlXHxEtyO4yxIO",
+        "0pqnGHJpmpxLKifKRmU6WP",
+        "0Altlm3kLPob56k2qqR4i2"
     ],
     "sad_instrumental": [
         "77yA6alNN6ToGYpWT4OvTw",

@@ -1,5 +1,5 @@
 from utils import read_json
-from config import MODEL_FILENAME
+from config import TRAINING_FILENAME, MODEL_FILENAME
 from spotify_api import SpotifySongMetadata
 
 
@@ -28,3 +28,9 @@ def apply_filter(tagname: str, metadata: SpotifySongMetadata):
     model = model_data.get(tagname)
     if model is not None:
         metadata.set_from_dict(model)
+
+def get_moods():
+    training_data = read_json(TRAINING_FILENAME)
+    moods = list(set([mood.replace('_vocal', '').replace('_instrumental', '') for mood in training_data.keys()]))
+
+    return moods
